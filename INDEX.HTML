@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation API Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="hearts-background"></div>
+
+    <div class="card">
+        <h2>Show My Location</h2>
+        <button id="geoBtn" onclick="getLocation()">Show My Location</button>
+        <div id="loc"></div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('geoBtn');
+        const loc = document.getElementById('loc');
+
+        function getLocation() {
+            if (!navigator.geolocation) {
+                loc.innerHTML = "<span>Geolocation is not supported by your browser.</span>";
+                return;
+            }
+
+            
+            btn.disabled = true;
+            btn.innerText = "Locating...";
+            loc.innerHTML = "";
+
+            navigator.geolocation.getCurrentPosition(success, error, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            });
+        }
+
+        function success(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+
+            loc.innerHTML = `
+                <span style="display:block;">Lat: ${latitude.toFixed(6)}</span>
+                <span style="display:block; margin-top: 5px;">Long: ${longitude.toFixed(6)}</span>
+                <br>
+                <a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank" style="color:#ff7f50; font-size:16px; text-decoration:none; display:block; margin-top:15px;">View on Maps</a>
+            `;
+
+            resetBtn();
+        }
+
+        function error(err) {
+            resetBtn();
+            let msg = "";
+            switch (err.code) {
+                case err.PERMISSION_DENIED:
+                    msg = "User denied the request.";
+                    break;
+                case err.POSITION_UNAVAILABLE:
+                    msg = "Location unavailable.";
+                    break;
+                case err.TIMEOUT:
+                    msg = "Request timed out.";
+                    break;
+                default:
+                    msg = "Unknown error.";
+            }
+            loc.innerHTML = `<span style="color:red">${msg}</span>`;
+        }
+
+        function resetBtn() {
+            btn.disabled = false;
+            btn.innerText = "Show My Location";
+        }
+
+        
+        const bg = document.querySelector('.hearts-background');
+        function animateBg() {
+    
+            const x1 = Math.floor(Math.random() * 100);
+            const y1 = Math.floor(Math.random() * 100);
+            const x2 = Math.floor(Math.random() * 100);
+            const y2 = Math.floor(Math.random() * 100);
+            const x3 = Math.floor(Math.random() * 100);
+            const y3 = Math.floor(Math.random() * 100);
+
+    
+            const op = 0.5 + Math.random() * 0.5;
+
+            bg.style.setProperty('--p1', `${x1}% ${y1}%`);
+            bg.style.setProperty('--p2', `${x2}% ${y2}%`);
+            bg.style.setProperty('--p3', `${x3}% ${y3}%`);
+            bg.style.setProperty('--op', op.toString());
+        }
+
+  
+        setInterval(animateBg, 4000);
+        animateBg();
+    </script>
+</body>
+
+</html>
+
